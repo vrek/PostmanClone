@@ -98,7 +98,7 @@
             // 
             // SystemStatus
             // 
-            SystemStatus.BackColor = SystemColors.WindowFrame;
+            SystemStatus.BackColor = SystemColors.ControlDarkDark;
             SystemStatus.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             SystemStatus.Items.AddRange(new ToolStripItem[] { lblStatus });
             SystemStatus.Location = new Point(0, 825);
@@ -108,6 +108,8 @@
             // 
             // lblStatus
             // 
+            lblStatus.ActiveLinkColor = Color.RebeccaPurple;
+            lblStatus.BackColor = Color.Yellow;
             lblStatus.Name = "lblStatus";
             lblStatus.Size = new Size(69, 30);
             lblStatus.Text = "Ready";

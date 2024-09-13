@@ -1,7 +1,11 @@
+using PostManCloneLibrary;
+
+
 namespace PostmanCloneUI
 {
     public partial class frmMain : Form
     {
+        private readonly APIAccess apiAccess = new();
         public frmMain()
         {
             InitializeComponent();
@@ -9,16 +13,20 @@ namespace PostmanCloneUI
 
         private async void btnExecute_Click(object sender, EventArgs e)
         {
+            lblStatus.Text = "Calling API";
+            lblResults.Text = "";
 
-            //TODO : Validate API format
+            if (apiAccess.IsValidUrl(txtAPI.Text) != true)
+            {
+                lblStatus.Text = "URL Invalid";
+                SystemStatus.BackColor = Color.Red;
+                lblStatus.ForeColor = Color.Black;
+                return;
+            }
 
             try
             {
-                lblStatus.Text = "Calling API";
-
-                //TODO : replace with real API processing
-                await Task.Delay(2000);
-
+                txtResults.Text = await apiAccess.CallAPI(txtAPI.Text);
                 lblStatus.Text = "Ready";
             }
             catch (Exception ex)
