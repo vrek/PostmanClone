@@ -5,7 +5,7 @@ namespace PostmanCloneUI
 {
     public partial class frmMain : Form
     {
-        private readonly APIAccess apiAccess = new();
+        private readonly IAPIAccess apiAccess = new APIAccess();
         public frmMain()
         {
             InitializeComponent();

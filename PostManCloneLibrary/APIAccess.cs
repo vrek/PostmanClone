@@ -2,7 +2,7 @@
 
 namespace PostManCloneLibrary
 {
-    public class APIAccess
+    public class APIAccess : IAPIAccess
     {
         public readonly HttpClient client = new();
         public async Task<string> CallAPI(string url, bool formatOutput = true, HttpAction action = HttpAction.GET)
