@@ -9,12 +9,12 @@ namespace PostmanCloneUI
         public frmMain()
         {
             InitializeComponent();
+            cmbAction.SelectedItem = "GET";
         }
 
         private async void btnExecute_Click(object sender, EventArgs e)
         {
             lblStatus.Text = "Calling API";
-            lblResults.Text = "";
 
             if (apiAccess.IsValidUrl(txtAPI.Text) != true)
             {
@@ -24,14 +24,24 @@ namespace PostmanCloneUI
                 return;
             }
 
+            HttpAction action;
+            if (Enum.TryParse(cmbAction.SelectedItem!.ToString(), out action) == false)
+            {
+                lblStatus.Text = "Invalid HTTP Action";
+                return;
+            }
+
+
+
             try
             {
-                txtResults.Text = await apiAccess.CallAPI(txtAPI.Text);
+                tBodyResults.SelectedTab = tbResults;
+                tbResults.Focus();
+                txtResults.Text = await apiAccess.CallAPI(txtAPI.Text, txtBody.Text, action);
                 lblStatus.Text = "Ready";
             }
-            catch (Exception ex)
+            catch
             {
-                lblResults.Text = ex.Message;
                 lblStatus.Text = "Error";
             }
 

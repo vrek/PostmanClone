@@ -1,13 +1,35 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 
 namespace PostManCloneLibrary
 {
     public class APIAccess : IAPIAccess
     {
         public readonly HttpClient client = new();
-        public async Task<string> CallAPI(string url, bool formatOutput = true, HttpAction action = HttpAction.GET)
+
+        public async Task<string> CallAPI(string url, string content, HttpAction action = HttpAction.GET, bool formatOutput = true)
         {
-            var response = await client.GetAsync(url);
+            StringContent stringContent = new(content, Encoding.UTF8, "application/json");
+            return await CallAPI(url, stringContent, action, formatOutput);
+        }
+
+
+        public async Task<string> CallAPI(string url, HttpContent? content = null, HttpAction action = HttpAction.GET, bool formatOutput = true)
+        {
+            HttpResponseMessage? response;
+
+            switch (action)
+            {
+                case HttpAction.GET:
+                    response = await client.GetAsync(url);
+                    break;
+                case HttpAction.POST:
+                    response = await client.PostAsync(url, content);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(action), action, null);
+            }
+
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
