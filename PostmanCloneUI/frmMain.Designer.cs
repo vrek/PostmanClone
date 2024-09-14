@@ -92,7 +92,7 @@
             txtResults.Name = "txtResults";
             txtResults.ReadOnly = true;
             txtResults.ScrollBars = ScrollBars.Both;
-            txtResults.Size = new Size(1157, 571);
+            txtResults.Size = new Size(1157, 586);
             txtResults.TabIndex = 3;
             // 
             // SystemStatus
@@ -117,7 +117,7 @@
             // 
             cmbAction.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbAction.FormattingEnabled = true;
-            cmbAction.Items.AddRange(new object[] { "GET", "POST", "PATCH", "DELETE" });
+            cmbAction.Items.AddRange(new object[] { "GET", "POST", "PATCH", "PUT", "DELETE" });
             cmbAction.Location = new Point(76, 100);
             cmbAction.Name = "cmbAction";
             cmbAction.Size = new Size(168, 38);
@@ -156,10 +156,10 @@
             // tbResults
             // 
             tbResults.Controls.Add(txtResults);
-            tbResults.Location = new Point(4, 39);
+            tbResults.Location = new Point(4, 24);
             tbResults.Name = "tbResults";
             tbResults.Padding = new Padding(3);
-            tbResults.Size = new Size(1163, 577);
+            tbResults.Size = new Size(1163, 592);
             tbResults.TabIndex = 1;
             tbResults.Text = "Results";
             tbResults.UseVisualStyleBackColor = true;

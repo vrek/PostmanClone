@@ -6,7 +6,8 @@ namespace PostManCloneLibrary
     {
         GET
         , POST
-        , Patch
+        , PATCH
         , DELETE
+        , PUT
     }
 }
