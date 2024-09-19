@@ -31,8 +31,6 @@ namespace PostmanCloneUI
                 return;
             }
 
-
-
             try
             {
                 tBodyResults.SelectedTab = tbResults;

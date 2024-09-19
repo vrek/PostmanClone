@@ -54,7 +54,7 @@ namespace PostManCloneLibrary
             }
         }
 
-        private static string FormatJson(string json)
+        public static string FormatJson(string json)
         {
             var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
             string prettyJon = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });

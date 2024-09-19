@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostmanCloneUI", "PostmanCl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostManCloneLibrary", "PostManCloneLibrary\PostManCloneLibrary.csproj", "{8C0A820A-3B73-43EB-AA5C-D1FDE74D38CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPostManCloneLibrary", "TestPostManCloneLibrary\TestPostManCloneLibrary.csproj", "{3F87999F-5767-47C8-8A0A-C18D533A1DCA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{36D9421A-D2D2-43BB-9ADB-78FADB1EECCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostManCloneLibraryTests", "PostManCloneLibraryTests\PostManCloneLibraryTests.csproj", "{0916C9B1-75F9-4551-93AB-A597AC693FF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,10 @@ Global
 		{8C0A820A-3B73-43EB-AA5C-D1FDE74D38CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C0A820A-3B73-43EB-AA5C-D1FDE74D38CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C0A820A-3B73-43EB-AA5C-D1FDE74D38CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F87999F-5767-47C8-8A0A-C18D533A1DCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F87999F-5767-47C8-8A0A-C18D533A1DCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F87999F-5767-47C8-8A0A-C18D533A1DCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F87999F-5767-47C8-8A0A-C18D533A1DCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0916C9B1-75F9-4551-93AB-A597AC693FF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0916C9B1-75F9-4551-93AB-A597AC693FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0916C9B1-75F9-4551-93AB-A597AC693FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0916C9B1-75F9-4551-93AB-A597AC693FF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
