@@ -129,6 +129,56 @@ namespace PostManCloneLibrary.Tests
         }
 
         [TestMethod()]
+        public async Task GivenPostCommandAndValidURLReturnsGivenPost()
+        {
+            APIAccess api = new APIAccess();
+
+            string inputString = "{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3}";
+
+            var outputString = "{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3, \"id\": 101}";
+            var outputElement = JsonSerializer.Deserialize<JsonElement>(outputString);
+
+            string outputJson = JsonSerializer.Serialize(outputElement, new JsonSerializerOptions { WriteIndented = true });
+
+            string url = @"https://jsonplaceholder.typicode.com/posts";
+            string result = await api.CallAPI(url, inputString, HttpAction.POST);
+            Assert.AreEqual(outputJson, result);
+        }
+
+        [TestMethod()]
+        public async Task GivenPutCommandAndValidURLReturnsGivenPost()
+        {
+            APIAccess api = new APIAccess();
+
+            string inputString = "{ \"id\": 1, \"Title\": \"This is a title\", \"Body\": \"This is a body\", \"userId\": 1}";
+
+            var outputString = "{ \"id\": 1, \"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 1}";
+            var outputElement = JsonSerializer.Deserialize<JsonElement>(outputString);
+
+            string outputJson = JsonSerializer.Serialize(outputElement, new JsonSerializerOptions { WriteIndented = true });
+
+            string url = @"https://jsonplaceholder.typicode.com/posts/1";
+            string result = await api.CallAPI(url, inputString, HttpAction.PUT);
+            Assert.AreEqual(outputJson, result);
+        }
+
+        [TestMethod()]
+        public async Task GivenPatchCommandAndValidURLReturnsGivenPost()
+        {
+            APIAccess api = new APIAccess();
+
+            string inputString = "{\"title\": \"This is a title\"}";
+
+            string outputstring = "{\"userId\": 1,\"id\": 1,\"title\": \"This is a title\", \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"}";
+            var jsonElement = JsonSerializer.Deserialize<JsonElement>(outputstring);
+            string outputJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
+
+            string url = @"https://jsonplaceholder.typicode.com/posts/1";
+            string result = await api.CallAPI(url, inputString, HttpAction.PATCH);
+            Assert.AreEqual(outputJson, result);
+        }
+
+        [TestMethod()]
         public async Task GivenGetCommandAndInvalidURLReturnsErrorCode()
         {
             APIAccess api = new APIAccess();
@@ -139,13 +189,24 @@ namespace PostManCloneLibrary.Tests
             string result = await api.CallAPI(url);
             Assert.AreEqual(expected, result);
         }
+        [TestMethod()]
+        public async Task GivenDeleteCommandAndValidURLReturnsPosts()
+        {
+            APIAccess api = new APIAccess();
+
+            string expectedJson = "{}";
+
+            string url = @"https://jsonplaceholder.typicode.com/posts/1";
+            string result = await api.CallAPI(url, "", HttpAction.DELETE);
+            Assert.AreEqual(expectedJson, result);
+        }
     }
 
     [TestClass()]
     public class FormatJSONTests
     {
         [TestMethod()]
-        public async Task GiveAStringReturnsJsonProperlyFormatted()
+        public Task GiveAStringReturnsJsonProperlyFormatted()
         {
 
             // Arrange
@@ -156,6 +217,7 @@ namespace PostManCloneLibrary.Tests
             string result = APIAccess.FormatJson(inputJson);
 
             Assert.AreEqual(expectedJson, result);
+            return Task.CompletedTask;
         }
     }
 }
