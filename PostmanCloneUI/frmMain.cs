@@ -15,8 +15,10 @@ namespace PostmanCloneUI
         private async void btnExecute_Click(object sender, EventArgs e)
         {
             lblStatus.Text = "Calling API";
+            string address = txtAPI.Text;
+            string body = txtBody.Text;
 
-            if (apiAccess.IsValidUrl(txtAPI.Text) != true)
+            if (apiAccess.IsValidUrl(address) != true)
             {
                 lblStatus.Text = "URL Invalid";
                 SystemStatus.BackColor = Color.Red;
@@ -33,14 +35,18 @@ namespace PostmanCloneUI
 
             try
             {
+                JSONValidator jSONValidator = new JSONValidator();
+                jSONValidator.ValidateJSON(body);
                 tBodyResults.SelectedTab = tbResults;
                 tbResults.Focus();
-                txtResults.Text = await apiAccess.CallAPI(txtAPI.Text, txtBody.Text, action);
+                txtResults.Text = await apiAccess.CallAPI(address, body, action);
                 lblStatus.Text = "Ready";
             }
-            catch
+            catch (Exception ex)
             {
-                lblStatus.Text = "Error";
+                SystemStatus.BackColor = Color.Red;
+                lblStatus.ForeColor = Color.Black;
+                lblStatus.Text = $"Error {ex.Message}";
             }
 
         }

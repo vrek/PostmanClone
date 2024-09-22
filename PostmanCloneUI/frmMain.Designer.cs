@@ -92,7 +92,7 @@
             txtResults.Name = "txtResults";
             txtResults.ReadOnly = true;
             txtResults.ScrollBars = ScrollBars.Both;
-            txtResults.Size = new Size(1157, 586);
+            txtResults.Size = new Size(1157, 571);
             txtResults.TabIndex = 3;
             // 
             // SystemStatus
@@ -156,10 +156,10 @@
             // tbResults
             // 
             tbResults.Controls.Add(txtResults);
-            tbResults.Location = new Point(4, 24);
+            tbResults.Location = new Point(4, 39);
             tbResults.Name = "tbResults";
             tbResults.Padding = new Padding(3);
-            tbResults.Size = new Size(1163, 592);
+            tbResults.Size = new Size(1163, 577);
             tbResults.TabIndex = 1;
             tbResults.Text = "Results";
             tbResults.UseVisualStyleBackColor = true;
