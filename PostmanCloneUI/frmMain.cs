@@ -6,9 +6,12 @@ namespace PostmanCloneUI
     public partial class frmMain : Form
     {
         private readonly IAPIAccess apiAccess = new APIAccess();
+
+        string results = "";
         public frmMain()
         {
             InitializeComponent();
+
             cmbAction.SelectedItem = "GET";
         }
 
@@ -35,11 +38,15 @@ namespace PostmanCloneUI
 
             try
             {
-                JSONValidator jSONValidator = new JSONValidator();
-                jSONValidator.ValidateJSON(body);
+                if (action != HttpAction.GET && action != HttpAction.DELETE)
+                {
+                    JSONValidator jSONValidator = new();
+                    jSONValidator.ValidateJSON(body);
+                }
                 tBodyResults.SelectedTab = tbResults;
                 tbResults.Focus();
-                txtResults.Text = await apiAccess.CallAPI(address, body, action);
+                results = await apiAccess.CallAPI(address, body, action);
+                txtResults.Text = results;
                 lblStatus.Text = "Ready";
             }
             catch (Exception ex)

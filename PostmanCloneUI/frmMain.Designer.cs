@@ -28,22 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             txtTitle = new Label();
             lblAPI = new Label();
             txtAPI = new TextBox();
             btnExecute = new Button();
-            txtResults = new TextBox();
             SystemStatus = new StatusStrip();
             lblStatus = new ToolStripStatusLabel();
             cmbAction = new ComboBox();
-            tBodyResults = new TabControl();
+            aPIAccessBindingSource = new BindingSource(components);
+            tbResults = new TabPage();
+            txtResults = new TextBox();
             tbBody = new TabPage();
             txtBody = new TextBox();
-            tbResults = new TabPage();
+            tBodyResults = new TabControl();
             SystemStatus.SuspendLayout();
-            tBodyResults.SuspendLayout();
-            tbBody.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)aPIAccessBindingSource).BeginInit();
             tbResults.SuspendLayout();
+            tbBody.SuspendLayout();
+            tBodyResults.SuspendLayout();
             SuspendLayout();
             // 
             // txtTitle
@@ -82,19 +85,6 @@
             btnExecute.UseVisualStyleBackColor = true;
             btnExecute.Click += btnExecute_Click;
             // 
-            // txtResults
-            // 
-            txtResults.BackColor = SystemColors.Info;
-            txtResults.BorderStyle = BorderStyle.FixedSingle;
-            txtResults.Dock = DockStyle.Fill;
-            txtResults.Location = new Point(3, 3);
-            txtResults.Multiline = true;
-            txtResults.Name = "txtResults";
-            txtResults.ReadOnly = true;
-            txtResults.ScrollBars = ScrollBars.Both;
-            txtResults.Size = new Size(1157, 571);
-            txtResults.TabIndex = 3;
-            // 
             // SystemStatus
             // 
             SystemStatus.BackColor = SystemColors.ControlDarkDark;
@@ -123,15 +113,28 @@
             cmbAction.Size = new Size(168, 38);
             cmbAction.TabIndex = 4;
             // 
-            // tBodyResults
+            // aPIAccessBindingSource
             // 
-            tBodyResults.Controls.Add(tbBody);
-            tBodyResults.Controls.Add(tbResults);
-            tBodyResults.Location = new Point(30, 165);
-            tBodyResults.Name = "tBodyResults";
-            tBodyResults.SelectedIndex = 0;
-            tBodyResults.Size = new Size(1171, 620);
-            tBodyResults.TabIndex = 5;
+            aPIAccessBindingSource.DataSource = typeof(PostManCloneLibrary.APIAccess);
+            // 
+            // tbResults
+            // 
+            tbResults.Controls.Add(txtResults);
+            tbResults.Location = new Point(4, 39);
+            tbResults.Name = "tbResults";
+            tbResults.Padding = new Padding(3);
+            tbResults.Size = new Size(1163, 577);
+            tbResults.TabIndex = 1;
+            tbResults.Text = "Results";
+            tbResults.UseVisualStyleBackColor = true;
+            // 
+            // txtResults
+            // 
+            txtResults.Location = new Point(7, 3);
+            txtResults.Multiline = true;
+            txtResults.Name = "txtResults";
+            txtResults.Size = new Size(1150, 568);
+            txtResults.TabIndex = 0;
             // 
             // tbBody
             // 
@@ -153,16 +156,15 @@
             txtBody.Size = new Size(1157, 571);
             txtBody.TabIndex = 0;
             // 
-            // tbResults
+            // tBodyResults
             // 
-            tbResults.Controls.Add(txtResults);
-            tbResults.Location = new Point(4, 39);
-            tbResults.Name = "tbResults";
-            tbResults.Padding = new Padding(3);
-            tbResults.Size = new Size(1163, 577);
-            tbResults.TabIndex = 1;
-            tbResults.Text = "Results";
-            tbResults.UseVisualStyleBackColor = true;
+            tBodyResults.Controls.Add(tbBody);
+            tBodyResults.Controls.Add(tbResults);
+            tBodyResults.Location = new Point(30, 165);
+            tBodyResults.Name = "tBodyResults";
+            tBodyResults.SelectedIndex = 0;
+            tBodyResults.Size = new Size(1171, 620);
+            tBodyResults.TabIndex = 5;
             // 
             // frmMain
             // 
@@ -182,11 +184,12 @@
             Text = "PostManClone";
             SystemStatus.ResumeLayout(false);
             SystemStatus.PerformLayout();
-            tBodyResults.ResumeLayout(false);
-            tbBody.ResumeLayout(false);
-            tbBody.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)aPIAccessBindingSource).EndInit();
             tbResults.ResumeLayout(false);
             tbResults.PerformLayout();
+            tbBody.ResumeLayout(false);
+            tbBody.PerformLayout();
+            tBodyResults.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -197,13 +200,14 @@
         private Label lblAPI;
         private TextBox txtAPI;
         private Button btnExecute;
-        private TextBox txtResults;
         private StatusStrip SystemStatus;
         private ToolStripStatusLabel lblStatus;
         private ComboBox cmbAction;
-        private TabControl tBodyResults;
-        private TabPage tbBody;
+        private BindingSource aPIAccessBindingSource;
         private TabPage tbResults;
+        private TextBox txtResults;
+        private TabPage tbBody;
         private TextBox txtBody;
+        private TabControl tBodyResults;
     }
 }
