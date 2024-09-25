@@ -1,4 +1,7 @@
-﻿using System.Text.Json;
+﻿using Moq;
+using Moq.Protected;
+using System.Net;
+using System.Text.Json;
 
 
 namespace PostManCloneLibrary.Tests
@@ -6,28 +9,71 @@ namespace PostManCloneLibrary.Tests
     [TestClass()]
     public class IsValidUrlTests
     {
+        public required Mock<HttpMessageHandler> _mockHttpMessageHandler;
+        public required HttpClient _mockClient;
+        public required APIAccess _api;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+
+            _mockClient = new HttpClient(_mockHttpMessageHandler.Object);
+
+            _api = new APIAccess(_mockClient);
+
+
+        }
+
 
         [TestMethod()]
         public void GivenavalidCOMadressReturnsTrue()
         {
-            bool expected = true;
-            APIAccess api = new APIAccess();
-            string url = @"https://jsonplaceholder.typicode.com/posts/1";
+            //_mockHttpMessageHandler
+            //    .Protected()
+            //    .Setup<Task<HttpResponseMessage>>(
+            //    "SendAsync", // The method we are mocking
+            //    ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+            //    ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            //)
+            //    .ReturnsAsync(new HttpResponseMessage
+            //    {
+            //        StatusCode = HttpStatusCode.OK,
+            //        Content = new StringContent("{ 'key': 'value' }")
+            //    });
 
-            bool result = api.IsValidUrl(url);
+            ////var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            bool expected = true;
+            string url = @"https://fakeurl.com";
+
+            bool result = _api.IsValidUrl(url);
 
             Assert.AreEqual(expected, result);
 
         }
 
         [TestMethod()]
-        public void GivenaBlankAdressReturnsFalse()
+        public void GivenBlankAddressReturnsFalse()
         {
             bool expected = false;
-            APIAccess api = new APIAccess();
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{ 'key': 'value' }")
+                });
+
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
             string url = @"";
 
-            bool result = api.IsValidUrl(url);
+            bool result = _api.IsValidUrl(url);
 
             Assert.AreEqual(expected, result);
 
@@ -36,11 +82,25 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAHTTPAdressReturnsFalse()
         {
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{ 'key': 'value' }")
+                });
+
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
             bool expected = false;
-            APIAccess api = new APIAccess();
             string url = @"http://jsonplaceholder.typicode.com/posts/1";
 
-            bool result = api.IsValidUrl(url);
+            bool result = _api.IsValidUrl(url);
 
             Assert.AreEqual(expected, result);
 
@@ -49,11 +109,25 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAnIPAdressReturnsFalse()
         {
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{ 'key': 'value' }")
+                });
+
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
             bool expected = false;
-            APIAccess api = new APIAccess();
             string url = @"127.0.0.1";
 
-            bool result = api.IsValidUrl(url);
+            bool result = _api.IsValidUrl(url);
 
             Assert.AreEqual(expected, result);
 
@@ -62,11 +136,27 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAnIPAdressAsHTTPAdReturnsTrue()
         {
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{ 'key': 'value' }")
+                });
+
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+
             bool expected = true;
-            APIAccess api = new APIAccess();
+
             string url = @"https://127.0.0.1/";
 
-            bool result = api.IsValidUrl(url);
+            bool result = _api.IsValidUrl(url);
 
             Assert.AreEqual(expected, result);
 
@@ -75,11 +165,25 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAnHTTPAddressWithoutASchemaReturnsFalse()
         {
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{ 'key': 'value' }")
+                });
+
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
             bool expected = false;
-            APIAccess api = new APIAccess();
             string url = @"jsonplaceholder.typicode.com/posts/1";
 
-            bool result = api.IsValidUrl(url);
+            bool result = _api.IsValidUrl(url);
 
             Assert.AreEqual(expected, result);
 
@@ -88,11 +192,26 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAnHTTPAddressWithoutATLDReturnsFalse()
         {
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{ 'key': 'value' }")
+                });
+
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
             bool expected = false;
-            APIAccess api = new APIAccess();
+
             string url = @"http://jsonplaceholder.typicode/posts/1";
 
-            bool result = api.IsValidUrl(url);
+            bool result = _api.IsValidUrl(url);
 
             Assert.AreEqual(expected, result);
 
@@ -101,11 +220,25 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAnHTTPAddressWithAFakeTLDReturnsFalse()
         {
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{ 'key': 'value' }")
+                });
+
+            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
             bool expected = false;
-            APIAccess api = new APIAccess();
             string url = @"http://jsonplaceholder.faketld/posts/1";
 
-            bool result = api.IsValidUrl(url);
+            bool result = _api.IsValidUrl(url);
 
             Assert.AreEqual(expected, result);
 
@@ -114,24 +247,71 @@ namespace PostManCloneLibrary.Tests
     [TestClass()]
     public class CallAPITests
     {
+        public required Mock<HttpMessageHandler> _mockHttpMessageHandler;
+        public required HttpClient _mockClient;
+        public required APIAccess _api;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+
+            _mockClient = new HttpClient(_mockHttpMessageHandler.Object);
+
+            _api = new APIAccess(_mockClient);
+        }
+
         [TestMethod()]
         public async Task GivenGetCommandAndValidURLReturnsPosts()
         {
-            APIAccess api = new APIAccess();
+            //Arrange
+            string inputJson = "{ \"key\": \"value\" }";
+            var Expectedjson = APIAccess.FormatJson(inputJson);
+            _mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{ \"key\": \"value\" }")
+                });
 
-            string inputJson = "{\"userId\": 1,\"id\": 1,\"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\", \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"}";
-            var jsonElement = JsonSerializer.Deserialize<JsonElement>(inputJson);
-            string expectedJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
+            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
 
-            string url = @"https://jsonplaceholder.typicode.com/posts/1";
-            string result = await api.CallAPI(url);
-            Assert.AreEqual(expectedJson, result);
+            string url = "http://fakeurl.com/api";
+            //Act
+
+            var result = await _api.CallAPI(url);
+
+
+            //Assert
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(Expectedjson, result);
         }
 
         [TestMethod()]
         public async Task GivenPostCommandAndValidURLReturnsGivenPost()
         {
-            APIAccess api = new APIAccess();
+            _mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3, \"id\": 101}")
+                });
+
+            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
+
 
             string inputString = "{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3}";
 
@@ -140,32 +320,61 @@ namespace PostManCloneLibrary.Tests
 
             string outputJson = JsonSerializer.Serialize(outputElement, new JsonSerializerOptions { WriteIndented = true });
 
-            string url = @"https://jsonplaceholder.typicode.com/posts";
-            string result = await api.CallAPI(url, inputString, HttpAction.POST);
+            string url = @"http://fakeurl.com/api";
+            string result = await _api.CallAPI(url, inputString, HttpAction.POST);
             Assert.AreEqual(outputJson, result);
         }
 
         [TestMethod()]
         public async Task GivenPutCommandAndValidURLReturnsGivenPost()
         {
-            APIAccess api = new APIAccess();
 
-            string inputString = "{ \"id\": 1, \"Title\": \"This is a title\", \"Body\": \"This is a body\", \"userId\": 1}";
 
-            var outputString = "{ \"id\": 1, \"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 1}";
+            _mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{ \"id\": 1, \"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 1}")
+                });
+
+            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
+
+            string inputString = @"{ ""id"": 1, ""Title"": ""This is a title"", ""Body"": ""This is a body"", ""userId"": 1}";
+
+            var outputString = @"{ ""id"": 1, ""Title"": ""This is a title"",""Body"": ""This is a body"",""userId"": 1}";
             var outputElement = JsonSerializer.Deserialize<JsonElement>(outputString);
 
             string outputJson = JsonSerializer.Serialize(outputElement, new JsonSerializerOptions { WriteIndented = true });
 
-            string url = @"https://jsonplaceholder.typicode.com/posts/1";
-            string result = await api.CallAPI(url, inputString, HttpAction.PUT);
+            string url = @"http://fakeurl.com/api";
+            string result = await _api.CallAPI(url, inputString, HttpAction.PUT);
             Assert.AreEqual(outputJson, result);
         }
 
         [TestMethod()]
         public async Task GivenPatchCommandAndValidURLReturnsGivenPost()
         {
-            APIAccess api = new APIAccess();
+
+            _mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{\"userId\": 1,\"id\": 1,\"title\": \"This is a title\", \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"}")
+                });
+
+            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
 
             string inputString = "{\"title\": \"This is a title\"}";
 
@@ -174,30 +383,57 @@ namespace PostManCloneLibrary.Tests
             string outputJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
 
             string url = @"https://jsonplaceholder.typicode.com/posts/1";
-            string result = await api.CallAPI(url, inputString, HttpAction.PATCH);
+            string result = await _api.CallAPI(url, inputString, HttpAction.PATCH);
             Assert.AreEqual(outputJson, result);
         }
 
         [TestMethod()]
         public async Task GivenGetCommandAndInvalidURLReturnsErrorCode()
         {
-            APIAccess api = new APIAccess();
+            _mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = (HttpStatusCode)521,
+                    Content = new StringContent("{ 'key': 'value' }")
+                });
+
+            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
 
             string expected = "Error: 521";
 
-            string url = @"https://jsonplaceholder.com/posts/1";
-            string result = await api.CallAPI(url);
+            string url = @"https://fakeurl.com/noapi";
+            string result = await _api.CallAPI(url);
             Assert.AreEqual(expected, result);
         }
         [TestMethod()]
         public async Task GivenDeleteCommandAndValidURLReturnsPosts()
         {
-            APIAccess api = new APIAccess();
+
+            _mockHttpMessageHandler
+                .Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                "SendAsync", // The method we are mocking
+                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
+                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+            )
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("{}")
+                });
+
+            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
 
             string expectedJson = "{}";
 
             string url = @"https://jsonplaceholder.typicode.com/posts/1";
-            string result = await api.CallAPI(url, "", HttpAction.DELETE);
+            string result = await _api.CallAPI(url, "", HttpAction.DELETE);
             Assert.AreEqual(expectedJson, result);
         }
     }

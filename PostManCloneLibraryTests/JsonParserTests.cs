@@ -27,6 +27,18 @@
             //Assert
             Assert.AreEqual(3, returnDict.Count);
         }
+        [TestMethod()]
+        public void JsonStringWithEqualSizeObjectsReturnsDictionaryWithEqualSizes()
+        {
+            //Arrange
+            string InputString = "{{\"id\":1,\"name\":\"Tom\",\"sport\":\"football\"},{\"id\":2,\"name\":\"Michael\",\"sport\":\"BasketBall\"},{\"id\":3,\"name\":\"Sammy\",\"sport\":\"Baseball\"}";
+
+            //Act
+            List<Dictionary<string, string>> returnDict = JsonParser.ParseJsonString(InputString);
+
+            //Assert
+            Assert.AreEqual(returnDict[0].Count, returnDict[1].Count);
+        }
 
     }
 }

@@ -4,7 +4,7 @@
     {
         public bool ValidateJSON(string input)
         {
-            if (!input.StartsWith("{") || !input.EndsWith("}"))
+            if ((!input.StartsWith("{") || !input.EndsWith("}")) && (!input.StartsWith("[") || !input.EndsWith("]")))
             {
                 throw new FormatException("JSON should start and end with curly braces");
                 //return false;

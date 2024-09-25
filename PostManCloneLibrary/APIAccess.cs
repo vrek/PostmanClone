@@ -5,7 +5,12 @@ namespace PostManCloneLibrary
 {
     public class APIAccess : IAPIAccess
     {
-        public readonly HttpClient client = new();
+        private readonly HttpClient _client;
+
+        public APIAccess(HttpClient client)
+        {
+            _client = client;
+        }
 
         public async Task<string> CallAPI(string url, string content, HttpAction action = HttpAction.GET, bool formatOutput = true)
         {
@@ -21,19 +26,19 @@ namespace PostManCloneLibrary
             switch (action)
             {
                 case HttpAction.GET:
-                    response = await client.GetAsync(url);
+                    response = await _client.GetAsync(url);
                     break;
                 case HttpAction.POST:
-                    response = await client.PostAsync(url, content);
+                    response = await _client.PostAsync(url, content);
                     break;
                 case HttpAction.PATCH:
-                    response = await client.PatchAsync(url, content);
+                    response = await _client.PatchAsync(url, content);
                     break;
                 case HttpAction.PUT:
-                    response = await client.PutAsync(url, content);
+                    response = await _client.PutAsync(url, content);
                     break;
                 case HttpAction.DELETE:
-                    response = await client.DeleteAsync(url);
+                    response = await _client.DeleteAsync(url);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(action), action, null);

@@ -133,6 +133,7 @@
             txtResults.Location = new Point(7, 3);
             txtResults.Multiline = true;
             txtResults.Name = "txtResults";
+            txtResults.ScrollBars = ScrollBars.Vertical;
             txtResults.Size = new Size(1150, 568);
             txtResults.TabIndex = 0;
             // 
