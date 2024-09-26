@@ -1,7 +1,6 @@
 ﻿using Moq;
 using Moq.Protected;
 using System.Net;
-using System.Text.Json;
 
 
 namespace PostManCloneLibrary.Tests
@@ -29,20 +28,7 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenavalidCOMadressReturnsTrue()
         {
-            //_mockHttpMessageHandler
-            //    .Protected()
-            //    .Setup<Task<HttpResponseMessage>>(
-            //    "SendAsync", // The method we are mocking
-            //    ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-            //    ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
-            //)
-            //    .ReturnsAsync(new HttpResponseMessage
-            //    {
-            //        StatusCode = HttpStatusCode.OK,
-            //        Content = new StringContent("{ 'key': 'value' }")
-            //    });
 
-            ////var httpClient = new HttpClient(mockHttpMessageHandler.Object);
             bool expected = true;
             string url = @"https://fakeurl.com";
 
@@ -266,7 +252,7 @@ namespace PostManCloneLibrary.Tests
         {
             //Arrange
             string inputJson = "{ \"key\": \"value\" }";
-            var Expectedjson = APIAccess.FormatJson(inputJson);
+            //var Expectedjson = JsonFormatter.FormatJson(inputJson);
             _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -291,7 +277,7 @@ namespace PostManCloneLibrary.Tests
             //Assert
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(Expectedjson, result);
+            Assert.AreEqual(inputJson, result);
         }
 
         [TestMethod()]
@@ -316,13 +302,13 @@ namespace PostManCloneLibrary.Tests
             string inputString = "{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3}";
 
             var outputString = "{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3, \"id\": 101}";
-            var outputElement = JsonSerializer.Deserialize<JsonElement>(outputString);
+            //var outputElement = JsonSerializer.Deserialize<JsonElement>(outputString);
 
-            string outputJson = JsonSerializer.Serialize(outputElement, new JsonSerializerOptions { WriteIndented = true });
+            //string outputJson = JsonSerializer.Serialize(outputElement, new JsonSerializerOptions { WriteIndented = true });
 
             string url = @"http://fakeurl.com/api";
             string result = await _api.CallAPI(url, inputString, HttpAction.POST);
-            Assert.AreEqual(outputJson, result);
+            Assert.AreEqual(outputString, result);
         }
 
         [TestMethod()]
@@ -348,13 +334,13 @@ namespace PostManCloneLibrary.Tests
             string inputString = @"{ ""id"": 1, ""Title"": ""This is a title"", ""Body"": ""This is a body"", ""userId"": 1}";
 
             var outputString = @"{ ""id"": 1, ""Title"": ""This is a title"",""Body"": ""This is a body"",""userId"": 1}";
-            var outputElement = JsonSerializer.Deserialize<JsonElement>(outputString);
+            //var outputElement = JsonSerializer.Deserialize<JsonElement>(outputString);
 
-            string outputJson = JsonSerializer.Serialize(outputElement, new JsonSerializerOptions { WriteIndented = true });
+            //string outputJson = JsonSerializer.Serialize(outputElement, new JsonSerializerOptions { WriteIndented = true });
 
             string url = @"http://fakeurl.com/api";
             string result = await _api.CallAPI(url, inputString, HttpAction.PUT);
-            Assert.AreEqual(outputJson, result);
+            Assert.AreEqual(outputString, result);
         }
 
         [TestMethod()]
@@ -379,12 +365,12 @@ namespace PostManCloneLibrary.Tests
             string inputString = "{\"title\": \"This is a title\"}";
 
             string outputstring = "{\"userId\": 1,\"id\": 1,\"title\": \"This is a title\", \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"}";
-            var jsonElement = JsonSerializer.Deserialize<JsonElement>(outputstring);
-            string outputJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
+            //var jsonElement = JsonSerializer.Deserialize<JsonElement>(outputstring);
+            //string outputJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
 
             string url = @"https://jsonplaceholder.typicode.com/posts/1";
             string result = await _api.CallAPI(url, inputString, HttpAction.PATCH);
-            Assert.AreEqual(outputJson, result);
+            Assert.AreEqual(outputstring, result);
         }
 
         [TestMethod()]
@@ -435,25 +421,6 @@ namespace PostManCloneLibrary.Tests
             string url = @"https://jsonplaceholder.typicode.com/posts/1";
             string result = await _api.CallAPI(url, "", HttpAction.DELETE);
             Assert.AreEqual(expectedJson, result);
-        }
-    }
-
-    [TestClass()]
-    public class FormatJSONTests
-    {
-        [TestMethod()]
-        public Task GiveAStringReturnsJsonProperlyFormatted()
-        {
-
-            // Arrange
-            string inputJson = "{\"userId\": 1,\"id\": 1,\"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\", \"body\": \"quia et suscipitnsuscipit recusandae consequuntur expedita et cumnreprehenderit molestiae ut ut quas totamnostrum rerum est autem sunt rem eveniet architecto\"}";
-            var jsonElement = JsonSerializer.Deserialize<JsonElement>(inputJson);
-            string expectedJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
-
-            string result = APIAccess.FormatJson(inputJson);
-
-            Assert.AreEqual(expectedJson, result);
-            return Task.CompletedTask;
         }
     }
 }

@@ -47,10 +47,11 @@ namespace PostmanCloneUI
                 }
                 tBodyResults.SelectedTab = tbResults;
                 tbResults.Focus();
-                results = await apiAccess.CallAPI(address, body, action, false);
+                results = await apiAccess.CallAPI(address, body, action);
                 txtResults.Text = results;
                 jSONValidator = new();
                 jSONValidator.ValidateJSON(results);
+                results = JsonFormatter.FormatJson(results);
                 txtResults.Text = results;
                 lblStatus.Text = "Ready";
             }

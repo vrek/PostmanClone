@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Json;
 
 namespace PostManCloneLibrary
 {
@@ -12,14 +11,14 @@ namespace PostManCloneLibrary
             _client = client;
         }
 
-        public async Task<string> CallAPI(string url, string content, HttpAction action = HttpAction.GET, bool formatOutput = true)
+        public async Task<string> CallAPI(string url, string content, HttpAction action = HttpAction.GET)
         {
             StringContent stringContent = new(content, Encoding.UTF8, "application/json");
-            return await CallAPI(url, stringContent, action, formatOutput);
+            return await CallAPI(url, stringContent, action);
         }
 
 
-        public async Task<string> CallAPI(string url, HttpContent? content = null, HttpAction action = HttpAction.GET, bool formatOutput = true)
+        public async Task<string> CallAPI(string url, HttpContent? content = null, HttpAction action = HttpAction.GET)
         {
             HttpResponseMessage? response;
 
@@ -47,10 +46,6 @@ namespace PostManCloneLibrary
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                if (formatOutput)
-                {
-                    json = FormatJson(json);
-                }
                 return json;
             }
             else
@@ -59,13 +54,6 @@ namespace PostManCloneLibrary
             }
         }
 
-        public static string FormatJson(string json)
-        {
-            var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
-            string prettyJon = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
-            json = prettyJon;
-            return json;
-        }
 
         public bool IsValidUrl(string url)
         {

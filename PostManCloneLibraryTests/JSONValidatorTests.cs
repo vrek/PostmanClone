@@ -36,19 +36,7 @@
             JSONValidator validate = new();
             Assert.ThrowsException<FormatException>(() => validate.ValidateJSON(InputString));
         }
-        [TestMethod()]
-        public void NestedJsonObjectsShouldBeTrue()
-        {
-            //Arrange
-            string InputString = "{{\"id\":1,\"name\":\"Tom\",\"sport\":\"football\"},{\"id\":2,\"name\":\"Michael\",\"sport\":\"BasketBall\"},{\"id\":3,\"name\":\"Sammy\",\"sport\":\"Baseball\"}";
-            JSONValidator validate = new();
 
-            //Act
-            bool result = validate.ValidateJSON(InputString);
-
-            //Assert
-            Assert.IsTrue(result);
-        }
         [TestMethod()]
         public void NestedJsonObjectsWithSquareBracetsShouldBeTrue()
         {
