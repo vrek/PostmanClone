@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.Testing.Extensions.CodeCoverage" Version="17.12.4" />
+    <PackageReference Update="Microsoft.Testing.Extensions.CodeCoverage" Version="17.12.5" />
   </ItemGroup>
 
   <ItemGroup>

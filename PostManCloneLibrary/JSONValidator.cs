@@ -1,22 +1,26 @@
-﻿namespace PostManCloneLibrary
+﻿using System.Text.Json;
+
+namespace PostManCloneLibrary
 {
     public class JSONValidator
     {
         public bool ValidateJSON(string input)
         {
-            if ((!input.StartsWith("{") || !input.EndsWith("}")) && (!input.StartsWith("[") || !input.EndsWith("]")))
+            if (input.StartsWith("Error:"))
             {
-                throw new FormatException("JSON should start and end with curly braces");
-                //return false;
+                throw new HttpRequestException("The server you are trying to connect to returned an error");
             }
-            var JSONObjects = input.Split(',');
-            foreach (var JSONObject in JSONObjects)
+            if (string.IsNullOrEmpty(input))
             {
-                string name = JSONObject.Split(':')[0].Trim();
-                if (!name.StartsWith("\"") && !name.EndsWith("\""))
-                {
-                    throw new FormatException($"{name} missing a quote");
-                }
+                throw new FormatException("The input can not be empty or whitespace");
+            }
+            try
+            {
+                JsonDocument.Parse(input);
+            }
+            catch
+            {
+                throw new FormatException("Invalid JSON format");
             }
             return true;
         }

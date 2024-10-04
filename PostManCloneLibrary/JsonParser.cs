@@ -1,36 +1,37 @@
-﻿namespace PostManCloneLibrary
+﻿using System.Text.Json;
+
+namespace PostManCloneLibrary
 {
     public class JsonParser
     {
-        public static Dictionary<string, string> ParseJSONObject(string input)
+        public static Dictionary<string, object> ParseJSONObject(string input)
         {
-            Dictionary<string, string> Result = new();
-            var JSONObject = input.Split(',');
-
-            foreach (var item in JSONObject)
+            try
             {
-                Result.Add(item.Split(':')[0], item.Split(':')[1]);
+                // Deserialize single JSON object into a dictionary
+                var parsed = JsonSerializer.Deserialize<Dictionary<string, object>>(input);
+                return parsed ?? new Dictionary<string, object>();
             }
-            return Result;
+            catch (JsonException)
+            {
+                throw new FormatException("Input is not a valid JSON object.");
+            }
         }
-        public static List<Dictionary<string, string>> ParseJsonString(string input)
+
+        public static List<Dictionary<string, object>> ParseJsonString(string input)
         {
-            List<Dictionary<string, string>> Result = new();
-            if (input[0] == '{')
+            try
             {
-                // Remove the outer braces and split by commas
-                var innerContent = input[1..^1];
-
-                // Split the inner content by commas for separate JSON objects
-                var jsonObjects = innerContent.Split(new[] { "},{" }, StringSplitOptions.None);
-
-                foreach (var jsonObject in jsonObjects)
-                {
-                    Result.Add(ParseJSONObject(jsonObject.Trim('{', '}')));
-                }
+                // First try to deserialize into a list of JSON objects
+                var parsedList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(input);
+                return parsedList ?? new List<Dictionary<string, object>>();
             }
-            else { Result.Add(ParseJSONObject(input)); }
-            return Result;
+            catch (JsonException)
+            {
+                // If it fails, try to parse as a single JSON object
+                var singleParsedObject = ParseJSONObject(input);
+                return new List<Dictionary<string, object>> { singleParsedObject };
+            }
         }
     }
 }

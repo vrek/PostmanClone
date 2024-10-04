@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using log4net;
+using Moq;
 using Moq.Protected;
 using System.Net;
 
@@ -9,6 +10,7 @@ namespace PostManCloneLibrary.Tests
     public class IsValidUrlTests
     {
         public required Mock<HttpMessageHandler> _mockHttpMessageHandler;
+        public required Mock<ILog> _mockLogger;
         public required HttpClient _mockClient;
         public required APIAccess _api;
 
@@ -18,8 +20,8 @@ namespace PostManCloneLibrary.Tests
             _mockHttpMessageHandler = new Mock<HttpMessageHandler>();
 
             _mockClient = new HttpClient(_mockHttpMessageHandler.Object);
-
-            _api = new APIAccess(_mockClient);
+            _mockLogger = new Mock<ILog>();
+            _api = new APIAccess(_mockClient, _mockLogger.Object);
 
 
         }
@@ -46,9 +48,9 @@ namespace PostManCloneLibrary.Tests
             mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -72,9 +74,9 @@ namespace PostManCloneLibrary.Tests
             mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -99,9 +101,9 @@ namespace PostManCloneLibrary.Tests
             mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -126,9 +128,9 @@ namespace PostManCloneLibrary.Tests
             mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -155,9 +157,9 @@ namespace PostManCloneLibrary.Tests
             mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -182,9 +184,9 @@ namespace PostManCloneLibrary.Tests
             mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -210,9 +212,9 @@ namespace PostManCloneLibrary.Tests
             mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -235,6 +237,7 @@ namespace PostManCloneLibrary.Tests
     {
         public required Mock<HttpMessageHandler> _mockHttpMessageHandler;
         public required HttpClient _mockClient;
+        public required Mock<ILog> _mockLogger;
         public required APIAccess _api;
 
         [TestInitialize]
@@ -243,8 +246,8 @@ namespace PostManCloneLibrary.Tests
             _mockHttpMessageHandler = new Mock<HttpMessageHandler>();
 
             _mockClient = new HttpClient(_mockHttpMessageHandler.Object);
-
-            _api = new APIAccess(_mockClient);
+            _mockLogger = new Mock<ILog>();
+            _api = new APIAccess(_mockClient, _mockLogger.Object);
         }
 
         [TestMethod()]
@@ -252,13 +255,12 @@ namespace PostManCloneLibrary.Tests
         {
             //Arrange
             string inputJson = "{ \"key\": \"value\" }";
-            //var Expectedjson = JsonFormatter.FormatJson(inputJson);
             _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -271,7 +273,7 @@ namespace PostManCloneLibrary.Tests
             string url = "http://fakeurl.com/api";
             //Act
 
-            var result = await _api.CallAPI(url);
+            var result = await _api.CallAPI(url, _mockLogger.Object);
 
 
             //Assert
@@ -286,9 +288,9 @@ namespace PostManCloneLibrary.Tests
             _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -302,12 +304,10 @@ namespace PostManCloneLibrary.Tests
             string inputString = "{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3}";
 
             var outputString = "{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3, \"id\": 101}";
-            //var outputElement = JsonSerializer.Deserialize<JsonElement>(outputString);
 
-            //string outputJson = JsonSerializer.Serialize(outputElement, new JsonSerializerOptions { WriteIndented = true });
 
             string url = @"http://fakeurl.com/api";
-            string result = await _api.CallAPI(url, inputString, HttpAction.POST);
+            string result = await _api.CallAPI(url, _mockLogger.Object, inputString, HttpAction.POST);
             Assert.AreEqual(outputString, result);
         }
 
@@ -319,9 +319,9 @@ namespace PostManCloneLibrary.Tests
             _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -334,12 +334,10 @@ namespace PostManCloneLibrary.Tests
             string inputString = @"{ ""id"": 1, ""Title"": ""This is a title"", ""Body"": ""This is a body"", ""userId"": 1}";
 
             var outputString = @"{ ""id"": 1, ""Title"": ""This is a title"",""Body"": ""This is a body"",""userId"": 1}";
-            //var outputElement = JsonSerializer.Deserialize<JsonElement>(outputString);
 
-            //string outputJson = JsonSerializer.Serialize(outputElement, new JsonSerializerOptions { WriteIndented = true });
 
             string url = @"http://fakeurl.com/api";
-            string result = await _api.CallAPI(url, inputString, HttpAction.PUT);
+            string result = await _api.CallAPI(url, _mockLogger.Object, inputString, HttpAction.PUT);
             Assert.AreEqual(outputString, result);
         }
 
@@ -350,9 +348,9 @@ namespace PostManCloneLibrary.Tests
             _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -365,11 +363,10 @@ namespace PostManCloneLibrary.Tests
             string inputString = "{\"title\": \"This is a title\"}";
 
             string outputstring = "{\"userId\": 1,\"id\": 1,\"title\": \"This is a title\", \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"}";
-            //var jsonElement = JsonSerializer.Deserialize<JsonElement>(outputstring);
-            //string outputJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
+
 
             string url = @"https://jsonplaceholder.typicode.com/posts/1";
-            string result = await _api.CallAPI(url, inputString, HttpAction.PATCH);
+            string result = await _api.CallAPI(url, _mockLogger.Object, inputString, HttpAction.PATCH);
             Assert.AreEqual(outputstring, result);
         }
 
@@ -379,9 +376,9 @@ namespace PostManCloneLibrary.Tests
             _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -394,7 +391,7 @@ namespace PostManCloneLibrary.Tests
             string expected = "Error: 521";
 
             string url = @"https://fakeurl.com/noapi";
-            string result = await _api.CallAPI(url);
+            string result = await _api.CallAPI(url, _mockLogger.Object);
             Assert.AreEqual(expected, result);
         }
         [TestMethod()]
@@ -404,9 +401,9 @@ namespace PostManCloneLibrary.Tests
             _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                "SendAsync", // The method we are mocking
-                ItExpr.IsAny<HttpRequestMessage>(), // Any HttpRequestMessage
-                ItExpr.IsAny<CancellationToken>()   // Any CancellationToken
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
             )
                 .ReturnsAsync(new HttpResponseMessage
                 {
@@ -419,7 +416,7 @@ namespace PostManCloneLibrary.Tests
             string expectedJson = "{}";
 
             string url = @"https://jsonplaceholder.typicode.com/posts/1";
-            string result = await _api.CallAPI(url, "", HttpAction.DELETE);
+            string result = await _api.CallAPI(url: url, _log: _mockLogger.Object, action: HttpAction.DELETE);
             Assert.AreEqual(expectedJson, result);
         }
     }

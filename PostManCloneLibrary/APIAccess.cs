@@ -1,24 +1,34 @@
-﻿using System.Text;
+﻿using log4net;
+using log4net.Config;
+using System.Text;
+
 
 namespace PostManCloneLibrary
 {
     public class APIAccess : IAPIAccess
     {
         private readonly HttpClient _client;
+        private readonly ILog _log;
 
-        public APIAccess(HttpClient client)
+        public APIAccess(HttpClient client, ILog log)
         {
             _client = client;
+            _log = log;
+            var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("App.config"));
+            var LogDB = new LogDB();
+            LogDB.InitializeDB();
         }
 
-        public async Task<string> CallAPI(string url, string content, HttpAction action = HttpAction.GET)
+        public async Task<string> CallAPI(string url, ILog _log, string JSONcontent, HttpAction action = HttpAction.GET)
         {
-            StringContent stringContent = new(content, Encoding.UTF8, "application/json");
-            return await CallAPI(url, stringContent, action);
+            StringContent stringContent = new(JSONcontent, Encoding.UTF8, "application/json");
+            return await CallAPI(url, _log, stringContent, action);
+
         }
 
 
-        public async Task<string> CallAPI(string url, HttpContent? content = null, HttpAction action = HttpAction.GET)
+        public async Task<string> CallAPI(string url, ILog _log, HttpContent? content = null, HttpAction action = HttpAction.GET)
         {
             HttpResponseMessage? response;
 
@@ -46,11 +56,13 @@ namespace PostManCloneLibrary
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
+                _log.Info(json);
                 return json;
             }
             else
             {
-                return $"Error: {response.StatusCode}";
+                _log.Error($"Status Code was {response.StatusCode}");
+                return $"Error: {response.StatusCode.ToString()}";
             }
         }
 

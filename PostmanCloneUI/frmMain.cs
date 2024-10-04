@@ -1,3 +1,4 @@
+using log4net;
 using PostManCloneLibrary;
 
 
@@ -5,13 +6,14 @@ namespace PostmanCloneUI
 {
     public partial class frmMain : Form
     {
+        private readonly ILog _logger;
         private static HttpClient _client = new HttpClient();
-        private readonly IAPIAccess apiAccess = new APIAccess(_client);
-
-        string results = "";
-        public frmMain()
+        private readonly IAPIAccess apiAccess;
+        public frmMain(ILog logger)
         {
             InitializeComponent();
+            _logger = logger;
+            apiAccess = new APIAccess(_client, _logger);
 
             cmbAction.SelectedItem = "GET";
         }
@@ -21,6 +23,7 @@ namespace PostmanCloneUI
             lblStatus.Text = "Calling API";
             string address = txtAPI.Text;
             string body = txtBody.Text;
+            string results = "";
 
             if (apiAccess.IsValidUrl(address) != true)
             {
@@ -47,11 +50,22 @@ namespace PostmanCloneUI
                 }
                 tBodyResults.SelectedTab = tbResults;
                 tbResults.Focus();
-                results = await apiAccess.CallAPI(address, body, action);
-                txtResults.Text = results;
-                jSONValidator = new();
-                jSONValidator.ValidateJSON(results);
-                results = JsonFormatter.FormatJson(results);
+                try
+                {
+                    results = await apiAccess.CallAPI(address, _logger, body, action);
+                    jSONValidator = new();
+                    jSONValidator.ValidateJSON(results);
+                    results = JsonFormatter.FormatJson(results);
+                    LogDB logDB = new LogDB();
+                    foreach (var result in results)
+                    {
+                        _logger.Info(result);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(Text = $"Error Occured {ex.Message}");
+                }
                 txtResults.Text = results;
                 lblStatus.Text = "Ready";
             }

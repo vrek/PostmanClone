@@ -6,4 +6,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.8" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.10" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+  </ItemGroup>		
+	<ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\Raymond\source\repos\PostmanClone\PostManCloneLibrary\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\Raymond\source\repos\PostmanClone\PostManCloneLibrary\.editorconfig" />
+  </ItemGroup>
+
 </Project>
