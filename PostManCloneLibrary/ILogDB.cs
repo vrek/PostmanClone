@@ -1,6 +1,6 @@
 ﻿namespace PostManCloneLibrary
 {
-    public interface ICreateDB
+    public interface ILogDB
     {
         void InitializeDB();
     }

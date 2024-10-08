@@ -1,5 +1,6 @@
 using log4net;
 using log4net.Config;
+using Microsoft.Extensions.DependencyInjection;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -12,17 +13,29 @@ namespace PostmanCloneUI
         /// </summary>
 
         private static readonly ILog logger = LogManager.GetLogger(typeof(Program));
+        private static IServiceProvider _serviceProvider;
         [STAThread]
         static void Main()
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
 
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+
+            _serviceProvider = services.BuildServiceProvider();
 
             ApplicationConfiguration.Initialize();
             var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetExecutingAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("App.config"));
-            Application.Run(new frmMain(logger));
+            var mainForm = _serviceProvider.GetRequiredService<frmMain>();
+            Application.Run(mainForm);
+        }
+
+        private static void ConfigureServices(ServiceCollection services)
+        {
+            services.AddTransient<frmMain>();
+            //services.AddLibraryService();
         }
     }
 }

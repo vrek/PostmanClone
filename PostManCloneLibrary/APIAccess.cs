@@ -27,7 +27,6 @@ namespace PostManCloneLibrary
 
         }
 
-
         public async Task<string> CallAPI(string url, ILog _log, HttpContent? content = null, HttpAction action = HttpAction.GET)
         {
             HttpResponseMessage? response;
@@ -56,7 +55,7 @@ namespace PostManCloneLibrary
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                _log.Info(json);
+                //_log.Info(json);
                 return json;
             }
             else

@@ -2,42 +2,70 @@
 
 namespace PostManCloneLibrary
 {
-    public class LogDB : ICreateDB
+    public class LogDB : ILogDB, IDisposable
     {
-        private string _dbFilePath;
-        private string _connectionString;
+        private readonly string _connectionString;
+        private readonly bool _useInMemory;
+        private SqliteConnection _connection;
 
-
-
-        public LogDB(string dbFilePath = "Logs.db")
+        public LogDB(string dbFilePath = "Logs.db", bool useInMemory = false)
         {
-            _dbFilePath = dbFilePath;
-            _connectionString = $"Data Source={_dbFilePath}";
+            _useInMemory = useInMemory;
+
+            if (useInMemory)
+            {
+                // Use an in-memory SQLite database
+                _connectionString = "Data Source=:memory:";
+            }
+            else
+            {
+                _connectionString = $"Data Source={dbFilePath}";
+
+                // Ensure the file exists if file-based DB is being used
+                if (!File.Exists(dbFilePath))
+                {
+                    File.Create(dbFilePath).Dispose(); // Create the file if it doesn't exist
+                }
+            }
+
+            // Open connection immediately for in-memory database
+            _connection = new SqliteConnection(_connectionString);
+            _connection.Open();
+        }
+
+        public string GetConnectionString()
+        {
+            return _connectionString;
         }
 
         public void InitializeDB()
         {
+            // Skip file existence checks for in-memory databases
+            string createTableQuery = @"
+            CREATE TABLE IF NOT EXISTS Log (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Date TEXT,
+                Name TEXT,
+                Value TEXT,
+                GUID TEXT
+            );";
 
-            if (!File.Exists(_connectionString))
+            using (var command = new SqliteCommand(createTableQuery, _connection))
             {
-                using (var connection = new SqliteConnection(_connectionString))
-                {
-                    connection.Open();
-                    string createTableQuery = @" CREATE TABLE IF NOT EXISTS Log (
-                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            Date TEXT,
-                            Thread TEXT,
-                            Level TEXT,
-                            Logger TEXT,
-                            Message TEXT,
-                            Exception TEXT
-                        );";
-                    using (var command = new SqliteCommand(createTableQuery, connection))
-                    {
-                        command.ExecuteNonQuery();  // Execute the query to create the table
-                    }
-                }
+                command.ExecuteNonQuery();  // Execute the query to create the table
+            }
+        }
+
+        // Dispose of the connection to close the database
+        public void Dispose()
+        {
+            if (_connection != null)
+            {
+                _connection.Close();
+                _connection.Dispose();
             }
         }
     }
+
+
 }
