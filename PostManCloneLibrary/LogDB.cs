@@ -56,6 +56,39 @@ namespace PostManCloneLibrary
             }
         }
 
+        public void InsertResults(List<Dictionary<string, object>> responses)
+        {
+            // Ensure the connection is open
+            if (_connection.State != System.Data.ConnectionState.Open)
+            {
+                _connection.Open();
+            }
+
+            Guid guid = Guid.NewGuid(); // Generate a new GUID for each set of responses
+            DateTime dateTime = DateTime.UtcNow; // Use the current date and time
+
+            foreach (var response in responses)
+            {
+                foreach (var item in response)
+                {
+                    string insertQuery = @"
+                INSERT INTO Log (Date, Name, Value, GUID)
+                VALUES (@date, @name, @value, @guid);";
+
+                    using (var command = new SqliteCommand(insertQuery, _connection))
+                    {
+                        command.Parameters.AddWithValue("@date", dateTime.ToString("o"));
+                        command.Parameters.AddWithValue("@name", item.Key);
+                        command.Parameters.AddWithValue("@value", item.Value?.ToString());
+                        command.Parameters.AddWithValue("@guid", guid.ToString());
+
+                        command.ExecuteNonQuery(); // Execute the insertion
+                    }
+                }
+            }
+        }
+
+
         // Dispose of the connection to close the database
         public void Dispose()
         {

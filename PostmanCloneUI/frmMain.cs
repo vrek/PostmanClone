@@ -57,6 +57,8 @@ namespace PostmanCloneUI
                     jSONValidator.ValidateJSON(results);
                     results = JsonFormatter.FormatJson(results);
                     LogDB logDB = new LogDB();
+                    var resultsForDB = JsonParser.ParseJsonString(results);
+                    logDB.InsertResults(resultsForDB);
                     foreach (var result in results)
                     {
                         _logger.Info(result);
