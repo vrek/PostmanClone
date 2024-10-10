@@ -1,8 +1,9 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using PostManCloneLibrary;
 using PostManCloneLibrary.Context;
 
-namespace PostManCloneLibrary.Tests
+namespace PostManCloneLibraryTests
 {
     [TestClass]
     public class LogDbTests
@@ -18,21 +19,21 @@ namespace PostManCloneLibrary.Tests
             _connection = new SqliteConnection("DataSource=:memory:");
             _connection.Open();
 
-            var options = new DbContextOptionsBuilder<LogDbContext>()
+            DbContextOptions<LogDbContext> options = new DbContextOptionsBuilder<LogDbContext>()
                 .UseSqlite(_connection)
                 .Options;
 
             // Initialize the DbContext with in-memory SQLite
             _context = new LogDbContext(options);
 
-            _context.Database.EnsureCreated();
+            _ = _context.Database.EnsureCreated();
             _logDb = new LogDB(_context);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            _context.Database.EnsureDeleted();
+            _ = _context.Database.EnsureDeleted();
             _context.Dispose();
             _connection.Close();
         }
@@ -41,25 +42,23 @@ namespace PostManCloneLibrary.Tests
         public void InsertResults_ShouldInsertDataIntoDatabase()
         {
             // Arrange
-            var responses = new List<Dictionary<string, object>>()
-                {
-                    new Dictionary<string, object>
-                    {
+            List<Dictionary<string, object>> responses =
+                [
+                    new() {
                         { "Name", "TestName1" },
                         { "Value", "TestValue1" }
                     },
-                    new Dictionary<string, object>
-                    {
+                    new() {
                         { "Name", "TestName2" },
                         { "Value", "TestValue2" }
                     }
-                };
+                ];
 
             // Act
             _logDb.InsertResults(responses);
 
             // Assert
-            var insertedLogs = _context.LogEntries.ToList();
+            List<PostManCloneLibrary.Models.Response> insertedLogs = [.. _context.LogEntries];
             Assert.AreEqual(2, insertedLogs.Count);
         }
 
@@ -67,25 +66,23 @@ namespace PostManCloneLibrary.Tests
         public void InsertResults_ShouldInsertDataCorrectlyIntoDatabase()
         {
             // Arrange
-            var responses = new List<Dictionary<string, object>>()
-                {
-                    new Dictionary<string, object>
-                    {
+            List<Dictionary<string, object>> responses =
+                [
+                    new() {
                         { "Name", "TestName1" },
                         { "Value", "TestValue1" }
                     },
-                    new Dictionary<string, object>
-                    {
+                    new() {
                         { "Name", "TestName2" },
                         { "Value", "TestValue2" }
                     }
-                };
+                ];
 
             // Act
             _logDb.InsertResults(responses);
 
             // Assert
-            var insertedLogs = _context.LogEntries.ToList();
+            List<PostManCloneLibrary.Models.Response> insertedLogs = [.. _context.LogEntries];
 
             Assert.AreEqual("TestName1", insertedLogs[0].Name);
             Assert.AreEqual("TestValue1", insertedLogs[0].Value);
@@ -97,11 +94,11 @@ namespace PostManCloneLibrary.Tests
         [TestMethod]
         public void InsertResultsShouldNotInsertWhenGivenEmptyList()
         {
-            var responses = new List<Dictionary<string, object>>();
+            List<Dictionary<string, object>> responses = [];
 
             _logDb.InsertResults(responses);
 
-            var InsertedLogs = _context.LogEntries.ToList();
+            List<PostManCloneLibrary.Models.Response> InsertedLogs = [.. _context.LogEntries];
             Assert.AreEqual(0, InsertedLogs.Count);
 
         }
@@ -111,13 +108,12 @@ namespace PostManCloneLibrary.Tests
         public void InsertResults_ShouldThrowExceptionForDataMissingValue()
         {
             // Arrange
-            var responses = new List<Dictionary<string, object>>()
-            {
-                new Dictionary<string, object>
-                {
+            List<Dictionary<string, object>> responses =
+            [
+                new() {
                     { "Name", "TestName1" }  // Missing Value key
                 },
-            };
+            ];
             // Act
             _logDb.InsertResults(responses);
 
@@ -129,18 +125,47 @@ namespace PostManCloneLibrary.Tests
         public void InsertResults_ShouldThrowExceptionForDataMissingName()
         {
             // Arrange
-            var responses = new List<Dictionary<string, object>>()
-            {
-                new Dictionary<string, object>
-                {
+            List<Dictionary<string, object>> responses =
+            [
+                new() {
                     { "Value", "ValueName1" }  // Missing Value key
                 },
-            };
+            ];
             // Act
             _logDb.InsertResults(responses);
 
             // Assert
             // No assert needed, as we're expecting an exception to be thrown
+        }
+
+        [TestMethod]
+        public void InsertResults_ShouldConvertNonStringValues()
+        {
+            // Arrange
+            List<Dictionary<string, object>> responses =
+            [
+        new() {
+            { "Name", "TestName1" },
+            { "Value", 12345 }  // Integer instead of string
+        },
+        new() {
+            { "Name", "TestName2" },
+            { "Value", true }  // Boolean instead of string
+        }
+            ];
+
+            // Act
+            _logDb.InsertResults(responses);
+
+            // Assert
+            List<PostManCloneLibrary.Models.Response> insertedLogs = [.. _context.LogEntries];
+            Assert.AreEqual(2, insertedLogs.Count);
+
+            // First log entry should have the integer value converted to string
+            Assert.AreEqual("12345", insertedLogs[0].Value);
+
+            // Second log entry should have the boolean value converted to string
+            Assert.AreEqual("True", insertedLogs[1].Value);
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using log4net;
 using Moq;
 using Moq.Protected;
+using PostManCloneLibrary;
 using System.Net;
 
 
-namespace PostManCloneLibrary.Tests
+namespace PostManCloneLibraryTests
 {
     [TestClass()]
     public class IsValidUrlTests
@@ -44,8 +45,8 @@ namespace PostManCloneLibrary.Tests
         public void GivenBlankAddressReturnsFalse()
         {
             bool expected = false;
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler
+            Mock<HttpMessageHandler> mockHttpMessageHandler = new();
+            _ = mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -57,8 +58,8 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{ 'key': 'value' }")
                 });
-
-            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(mockHttpMessageHandler.Object);
             string url = @"";
 
             bool result = _api.IsValidUrl(url);
@@ -70,8 +71,8 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAHTTPAdressReturnsFalse()
         {
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler
+            Mock<HttpMessageHandler> mockHttpMessageHandler = new();
+            _ = mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -83,8 +84,8 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{ 'key': 'value' }")
                 });
-
-            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(mockHttpMessageHandler.Object);
             bool expected = false;
             string url = @"http://jsonplaceholder.typicode.com/posts/1";
 
@@ -97,8 +98,8 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAnIPAdressReturnsFalse()
         {
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler
+            Mock<HttpMessageHandler> mockHttpMessageHandler = new();
+            _ = mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -110,8 +111,8 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{ 'key': 'value' }")
                 });
-
-            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(mockHttpMessageHandler.Object);
             bool expected = false;
             string url = @"127.0.0.1";
 
@@ -124,8 +125,8 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAnIPAdressAsHTTPAdReturnsTrue()
         {
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler
+            Mock<HttpMessageHandler> mockHttpMessageHandler = new();
+            _ = mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -137,8 +138,8 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{ 'key': 'value' }")
                 });
-
-            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(mockHttpMessageHandler.Object);
 
             bool expected = true;
 
@@ -153,8 +154,8 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAnHTTPAddressWithoutASchemaReturnsFalse()
         {
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler
+            Mock<HttpMessageHandler> mockHttpMessageHandler = new();
+            _ = mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -166,8 +167,8 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{ 'key': 'value' }")
                 });
-
-            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(mockHttpMessageHandler.Object);
             bool expected = false;
             string url = @"jsonplaceholder.typicode.com/posts/1";
 
@@ -180,8 +181,8 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAnHTTPAddressWithoutATLDReturnsFalse()
         {
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler
+            Mock<HttpMessageHandler> mockHttpMessageHandler = new();
+            _ = mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -193,8 +194,8 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{ 'key': 'value' }")
                 });
-
-            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(mockHttpMessageHandler.Object);
             bool expected = false;
 
             string url = @"http://jsonplaceholder.typicode/posts/1";
@@ -208,8 +209,8 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public void GivenAnHTTPAddressWithAFakeTLDReturnsFalse()
         {
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler
+            Mock<HttpMessageHandler> mockHttpMessageHandler = new();
+            _ = mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -221,8 +222,8 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{ 'key': 'value' }")
                 });
-
-            var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(mockHttpMessageHandler.Object);
             bool expected = false;
             string url = @"http://jsonplaceholder.faketld/posts/1";
 
@@ -255,7 +256,7 @@ namespace PostManCloneLibrary.Tests
         {
             //Arrange
             string inputJson = "{ \"key\": \"value\" }";
-            _mockHttpMessageHandler
+            _ = _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -267,13 +268,13 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{ \"key\": \"value\" }")
                 });
-
-            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(_mockHttpMessageHandler.Object);
 
             string url = "http://fakeurl.com/api";
             //Act
 
-            var result = await _api.CallAPI(url, _mockLogger.Object);
+            string result = await _api.CallAPI(url, _mockLogger.Object);
 
 
             //Assert
@@ -285,7 +286,7 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public async Task GivenPostCommandAndValidURLReturnsGivenPost()
         {
-            _mockHttpMessageHandler
+            _ = _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -297,13 +298,13 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3, \"id\": 101}")
                 });
-
-            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(_mockHttpMessageHandler.Object);
 
 
             string inputString = "{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3}";
 
-            var outputString = "{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3, \"id\": 101}";
+            string outputString = "{\"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 3, \"id\": 101}";
 
 
             string url = @"http://fakeurl.com/api";
@@ -316,7 +317,7 @@ namespace PostManCloneLibrary.Tests
         {
 
 
-            _mockHttpMessageHandler
+            _ = _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -328,12 +329,12 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{ \"id\": 1, \"Title\": \"This is a title\",\"Body\": \"This is a body\",\"userId\": 1}")
                 });
-
-            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(_mockHttpMessageHandler.Object);
 
             string inputString = @"{ ""id"": 1, ""Title"": ""This is a title"", ""Body"": ""This is a body"", ""userId"": 1}";
 
-            var outputString = @"{ ""id"": 1, ""Title"": ""This is a title"",""Body"": ""This is a body"",""userId"": 1}";
+            string outputString = @"{ ""id"": 1, ""Title"": ""This is a title"",""Body"": ""This is a body"",""userId"": 1}";
 
 
             string url = @"http://fakeurl.com/api";
@@ -345,7 +346,7 @@ namespace PostManCloneLibrary.Tests
         public async Task GivenPatchCommandAndValidURLReturnsGivenPost()
         {
 
-            _mockHttpMessageHandler
+            _ = _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -357,8 +358,8 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{\"userId\": 1,\"id\": 1,\"title\": \"This is a title\", \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"}")
                 });
-
-            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(_mockHttpMessageHandler.Object);
 
             string inputString = "{\"title\": \"This is a title\"}";
 
@@ -373,7 +374,7 @@ namespace PostManCloneLibrary.Tests
         [TestMethod()]
         public async Task GivenGetCommandAndInvalidURLReturnsErrorCode()
         {
-            _mockHttpMessageHandler
+            _ = _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -385,8 +386,8 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = (HttpStatusCode)521,
                     Content = new StringContent("{ 'key': 'value' }")
                 });
-
-            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(_mockHttpMessageHandler.Object);
 
             string expected = "Error: 521";
 
@@ -398,7 +399,7 @@ namespace PostManCloneLibrary.Tests
         public async Task GivenDeleteCommandAndValidURLReturnsPosts()
         {
 
-            _mockHttpMessageHandler
+            _ = _mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -410,8 +411,8 @@ namespace PostManCloneLibrary.Tests
                     StatusCode = HttpStatusCode.OK,
                     Content = new StringContent("{}")
                 });
-
-            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
+            _ = new
+            HttpClient(_mockHttpMessageHandler.Object);
 
             string expectedJson = "{}";
 

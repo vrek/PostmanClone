@@ -7,9 +7,9 @@ namespace PostmanCloneUI
     public partial class frmMain : Form
     {
         private readonly ILog _logger;
-        private static HttpClient _client = new HttpClient();
+        private static readonly HttpClient _client = new();
         private readonly IAPIAccess apiAccess;
-        private ILogDB _logDB;
+        private readonly ILogDB _logDB;
 
         public frmMain(ILog logger, ILogDB logDB)
         {
@@ -36,8 +36,7 @@ namespace PostmanCloneUI
                 return;
             }
 
-            HttpAction action;
-            if (Enum.TryParse(cmbAction.SelectedItem!.ToString(), out action) == false)
+            if (Enum.TryParse(cmbAction.SelectedItem!.ToString(), out HttpAction action) == false)
             {
                 lblStatus.Text = "Invalid HTTP Action";
                 return;
@@ -48,27 +47,27 @@ namespace PostmanCloneUI
                 JSONValidator jSONValidator = new();
                 if (action != HttpAction.GET && action != HttpAction.DELETE)
                 {
-                    jSONValidator.ValidateJSON(body);
+                    _ = JSONValidator.ValidateJSON(body);
                     return;
                 }
                 tBodyResults.SelectedTab = tbResults;
-                tbResults.Focus();
+                _ = tbResults.Focus();
                 try
                 {
                     results = await apiAccess.CallAPI(address, _logger, body, action);
                     jSONValidator = new();
-                    jSONValidator.ValidateJSON(results);
+                    _ = JSONValidator.ValidateJSON(results);
                     results = JsonFormatter.FormatJson(results);
-                    var resultsForDB = JsonParser.ParseJsonString(results);
+                    List<Dictionary<string, object>> resultsForDB = JsonParser.ParseJsonString(results);
                     _logDB.InsertResults(resultsForDB);
-                    foreach (var result in results)
+                    foreach (char result in results)
                     {
                         _logger.Info(result);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(Text = $"Error Occured {ex.Message}");
+                    _ = MessageBox.Show(Text = $"Error Occured {ex.Message}");
                 }
                 txtResults.Text = results;
                 lblStatus.Text = "Ready";

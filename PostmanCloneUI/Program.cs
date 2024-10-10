@@ -24,26 +24,28 @@ namespace PostmanCloneUI
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
 
-            var services = new ServiceCollection();
+            ServiceCollection services = new();
             ConfigureServices(services);
 
             _serviceProvider = services.BuildServiceProvider();
 
             ApplicationConfiguration.Initialize();
-            var logDB = _serviceProvider.GetRequiredService<ILogDB>();
-            var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetExecutingAssembly());
-            XmlConfigurator.Configure(logRepository, new FileInfo("App.config"));
-            var mainForm = _serviceProvider.GetRequiredService<frmMain>();
+            log4net.Repository.ILoggerRepository logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetExecutingAssembly());
+            _ = XmlConfigurator.Configure(logRepository, new FileInfo("App.config"));
+            frmMain mainForm = _serviceProvider.GetRequiredService<frmMain>();
             Application.Run(mainForm);
         }
 
         private static void ConfigureServices(ServiceCollection services)
         {
-            services.AddSingleton<ILog>(provider => LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType));
-            services.AddDbContext<LogDbContext>(options =>
+            _ = services.AddSingleton(provider =>
+            {
+                return LogManager.GetLogger(type: MethodBase.GetCurrentMethod().DeclaringType);
+            });
+            _ = services.AddDbContext<LogDbContext>(options =>
                options.UseSqlite("Data Source=Logs.db"));
-            services.AddScoped<ILogDB, LogDB>();
-            services.AddTransient<frmMain>();
+            _ = services.AddScoped<ILogDB, LogDB>();
+            _ = services.AddTransient<frmMain>();
             //services.AddLibraryService();
         }
     }

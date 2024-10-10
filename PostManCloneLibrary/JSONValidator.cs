@@ -4,7 +4,7 @@ namespace PostManCloneLibrary
 {
     public class JSONValidator
     {
-        public bool ValidateJSON(string input)
+        public static bool ValidateJSON(string input)
         {
             if (input.StartsWith("Error:"))
             {
@@ -16,7 +16,7 @@ namespace PostManCloneLibrary
             }
             try
             {
-                JsonDocument.Parse(input);
+                _ = JsonDocument.Parse(input);
             }
             catch
             {

@@ -16,8 +16,8 @@ namespace PostManCloneLibrary
             _client = client;
 
 
-            var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetEntryAssembly());
-            XmlConfigurator.Configure(logRepository, new FileInfo("App.config"));
+            log4net.Repository.ILoggerRepository logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetEntryAssembly());
+            _ = XmlConfigurator.Configure(logRepository, new FileInfo("App.config"));
             //var LogDB = new LogDB();
         }
 
@@ -30,29 +30,15 @@ namespace PostManCloneLibrary
 
         public async Task<string> CallAPI(string url, ILog _log, HttpContent? content = null, HttpAction action = HttpAction.GET)
         {
-            HttpResponseMessage? response;
-
-            switch (action)
+            HttpResponseMessage? response = action switch
             {
-                case HttpAction.GET:
-                    response = await _client.GetAsync(url);
-                    break;
-                case HttpAction.POST:
-                    response = await _client.PostAsync(url, content);
-                    break;
-                case HttpAction.PATCH:
-                    response = await _client.PatchAsync(url, content);
-                    break;
-                case HttpAction.PUT:
-                    response = await _client.PutAsync(url, content);
-                    break;
-                case HttpAction.DELETE:
-                    response = await _client.DeleteAsync(url);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(action), action, null);
-            }
-
+                HttpAction.GET => await _client.GetAsync(url),
+                HttpAction.POST => await _client.PostAsync(url, content),
+                HttpAction.PATCH => await _client.PatchAsync(url, content),
+                HttpAction.PUT => await _client.PutAsync(url, content),
+                HttpAction.DELETE => await _client.DeleteAsync(url),
+                _ => throw new ArgumentOutOfRangeException(nameof(action), action, null),
+            };
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
@@ -61,7 +47,7 @@ namespace PostManCloneLibrary
             else
             {
                 _log.Error($"Status Code was {response.StatusCode}");
-                return $"Error: {response.StatusCode.ToString()}";
+                return $"Error: {response.StatusCode}";
             }
         }
 
@@ -73,7 +59,7 @@ namespace PostManCloneLibrary
             {
                 return false;
             }
-            bool output = Uri.TryCreate(url, UriKind.Absolute, out Uri uriOutput) && (uriOutput.Scheme == Uri.UriSchemeHttps);
+            bool output = Uri.TryCreate(url, UriKind.Absolute, out Uri? uriOutput) && (uriOutput.Scheme == Uri.UriSchemeHttps);
             return output;
         }
     }

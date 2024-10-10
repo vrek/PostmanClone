@@ -4,16 +4,17 @@ namespace PostManCloneLibrary
 {
     public class JsonFormatter
     {
-
+        public static readonly JsonSerializerOptions options = new() { WriteIndented = true };
         public static string FormatJson(string json)
         {
             string prettyJson;
+
             try
             {
                 if (json == "")
                     return "";
-                var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
-                prettyJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
+                JsonElement jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
+                prettyJson = JsonSerializer.Serialize(jsonElement, options);
             }
             catch
             {

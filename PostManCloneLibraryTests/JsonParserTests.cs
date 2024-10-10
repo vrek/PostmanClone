@@ -1,4 +1,6 @@
-﻿namespace PostManCloneLibrary.Tests
+﻿using PostManCloneLibrary;
+
+namespace PostManCloneLibraryTests
 {
     [TestClass()]
     public class JsonParserTests

@@ -1,19 +1,23 @@
-﻿using System.Text.Json;
+﻿using PostManCloneLibrary;
+using System.Text.Json;
 
 
-namespace PostManCloneLibrary.Tests
+namespace PostManCloneLibraryTests
 {
     [TestClass()]
     public class FormatJSONTests
     {
+
+        public static readonly JsonSerializerOptions options = new() { WriteIndented = true };
+
         [TestMethod()]
         public void GiveAStringReturnsJsonProperlyFormatted()
         {
 
             // Arrange
             string inputJson = "{\"userId\": 1,\"id\": 1,\"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\", \"body\": \"quia et suscipitnsuscipit recusandae consequuntur expedita et cumnreprehenderit molestiae ut ut quas totamnostrum rerum est autem sunt rem eveniet architecto\"}";
-            var jsonElement = JsonSerializer.Deserialize<JsonElement>(inputJson);
-            string expectedJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
+            JsonElement jsonElement = JsonSerializer.Deserialize<JsonElement>(inputJson);
+            string expectedJson = JsonSerializer.Serialize(jsonElement, options);
 
             //Act
             string result = JsonFormatter.FormatJson(inputJson);
@@ -41,9 +45,9 @@ namespace PostManCloneLibrary.Tests
         {
             //Arrange
             string InputString = "[{\"id\":1,\"name\":\"Tom\",\"sport\":\"football\"},{\"id\":2,\"name\":\"Michael\",\"sport\":\"BasketBall\"},{\"id\":3,\"name\":\"Sammy\",\"sport\":\"Baseball\"}]";
-            var jsonElement = JsonSerializer.Deserialize<JsonElement>(InputString);
-            string expectedJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
-            JSONValidator validate = new();
+            JsonElement jsonElement = JsonSerializer.Deserialize<JsonElement>(InputString);
+            string expectedJson = JsonSerializer.Serialize(jsonElement, options);
+            _ = new JSONValidator();
 
             //Act
             string result = JsonFormatter.FormatJson(InputString);
@@ -60,7 +64,7 @@ namespace PostManCloneLibrary.Tests
             //Act
 
             //Assert
-            Assert.ThrowsException<JsonException>(() => JsonFormatter.FormatJson(InputString));
+            _ = Assert.ThrowsException<JsonException>(() => JsonFormatter.FormatJson(InputString));
         }
         [TestMethod()]
         public void WhenStringWithNameNotInDoubleQuotesThrowsException()
@@ -71,7 +75,7 @@ namespace PostManCloneLibrary.Tests
             //Act
 
             //Assert
-            Assert.ThrowsException<JsonException>(() => JsonFormatter.FormatJson(InputString));
+            _ = Assert.ThrowsException<JsonException>(() => JsonFormatter.FormatJson(InputString));
         }
     }
 }
