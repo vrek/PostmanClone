@@ -9,11 +9,14 @@ namespace PostmanCloneUI
         private readonly ILog _logger;
         private static HttpClient _client = new HttpClient();
         private readonly IAPIAccess apiAccess;
-        public frmMain(ILog logger)
+        private ILogDB _logDB;
+
+        public frmMain(ILog logger, ILogDB logDB)
         {
             InitializeComponent();
             _logger = logger;
-            apiAccess = new APIAccess(_client, _logger);
+            _logDB = logDB;
+            apiAccess = new APIAccess(_client);
 
             cmbAction.SelectedItem = "GET";
         }
@@ -56,9 +59,8 @@ namespace PostmanCloneUI
                     jSONValidator = new();
                     jSONValidator.ValidateJSON(results);
                     results = JsonFormatter.FormatJson(results);
-                    LogDB logDB = new LogDB();
                     var resultsForDB = JsonParser.ParseJsonString(results);
-                    logDB.InsertResults(resultsForDB);
+                    _logDB.InsertResults(resultsForDB);
                     foreach (var result in results)
                     {
                         _logger.Info(result);

@@ -21,7 +21,7 @@ namespace PostManCloneLibrary.Tests
 
             _mockClient = new HttpClient(_mockHttpMessageHandler.Object);
             _mockLogger = new Mock<ILog>();
-            _api = new APIAccess(_mockClient, _mockLogger.Object);
+            _api = new APIAccess(_mockClient);
 
 
         }
@@ -247,7 +247,7 @@ namespace PostManCloneLibrary.Tests
 
             _mockClient = new HttpClient(_mockHttpMessageHandler.Object);
             _mockLogger = new Mock<ILog>();
-            _api = new APIAccess(_mockClient, _mockLogger.Object);
+            _api = new APIAccess(_mockClient);
         }
 
         [TestMethod()]

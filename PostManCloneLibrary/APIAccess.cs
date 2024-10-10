@@ -8,16 +8,17 @@ namespace PostManCloneLibrary
     public class APIAccess : IAPIAccess
     {
         private readonly HttpClient _client;
-        private readonly ILog _log;
 
-        public APIAccess(HttpClient client, ILog log)
+        //private ILogDB _logDB;
+
+        public APIAccess(HttpClient client)
         {
             _client = client;
-            _log = log;
+
+
             var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("App.config"));
-            var LogDB = new LogDB();
-            LogDB.InitializeDB();
+            //var LogDB = new LogDB();
         }
 
         public async Task<string> CallAPI(string url, ILog _log, string JSONcontent, HttpAction action = HttpAction.GET)
@@ -55,7 +56,6 @@ namespace PostManCloneLibrary
             if (response.IsSuccessStatusCode)
             {
                 string json = await response.Content.ReadAsStringAsync();
-                //_log.Info(json);
                 return json;
             }
             else

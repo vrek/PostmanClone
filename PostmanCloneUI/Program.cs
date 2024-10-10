@@ -2,6 +2,7 @@ using log4net;
 using log4net.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using PostManCloneLibrary;
 using PostManCloneLibrary.Context;
 using System.Reflection;
 
@@ -29,6 +30,7 @@ namespace PostmanCloneUI
             _serviceProvider = services.BuildServiceProvider();
 
             ApplicationConfiguration.Initialize();
+            var logDB = _serviceProvider.GetRequiredService<ILogDB>();
             var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetExecutingAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("App.config"));
             var mainForm = _serviceProvider.GetRequiredService<frmMain>();
@@ -38,10 +40,11 @@ namespace PostmanCloneUI
         private static void ConfigureServices(ServiceCollection services)
         {
             services.AddSingleton<ILog>(provider => LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType));
+            services.AddDbContext<LogDbContext>(options =>
+               options.UseSqlite("Data Source=Logs.db"));
+            services.AddScoped<ILogDB, LogDB>();
             services.AddTransient<frmMain>();
             //services.AddLibraryService();
-            services.AddDbContext<LogDbContext>(options =>
-                options.UseSqlite("Data Source=Logs.db"));
         }
     }
 }

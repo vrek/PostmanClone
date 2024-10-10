@@ -1,104 +1,56 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using PostManCloneLibrary.Context;
+using PostManCloneLibrary.Models;
 
 namespace PostManCloneLibrary
 {
     public class LogDB : ILogDB, IDisposable
     {
-        private readonly string _connectionString;
-        private readonly bool _useInMemory;
-        private SqliteConnection _connection;
+        private readonly LogDbContext _context;
 
-        public LogDB(string dbFilePath = "Logs.db", bool useInMemory = false)
+        public LogDB(LogDbContext context)
         {
-            _useInMemory = useInMemory;
+            _context = context;
 
-            if (useInMemory)
-            {
-                // Use an in-memory SQLite database
-                _connectionString = "Data Source=:memory:";
-            }
-            else
-            {
-                _connectionString = $"Data Source={dbFilePath}";
-
-                // Ensure the file exists if file-based DB is being used
-                if (!File.Exists(dbFilePath))
-                {
-                    File.Create(dbFilePath).Dispose(); // Create the file if it doesn't exist
-                }
-            }
-
-            // Open connection immediately for in-memory database
-            _connection = new SqliteConnection(_connectionString);
-            _connection.Open();
+            // Ensure the database is created
+            _context.Database.EnsureCreated();
         }
 
-        public string GetConnectionString()
+        public LogDbContext GetDBContext()
         {
-            return _connectionString;
-        }
-
-        public void InitializeDB()
-        {
-            // Skip file existence checks for in-memory databases
-            string createTableQuery = @"
-            CREATE TABLE IF NOT EXISTS Log (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Date TEXT,
-                Name TEXT,
-                Value TEXT,
-                GUID TEXT
-            );";
-
-            using (var command = new SqliteCommand(createTableQuery, _connection))
-            {
-                command.ExecuteNonQuery();  // Execute the query to create the table
-            }
+            return _context;
         }
 
         public void InsertResults(List<Dictionary<string, object>> responses)
         {
-            // Ensure the connection is open
-            if (_connection.State != System.Data.ConnectionState.Open)
-            {
-                _connection.Open();
-            }
-
-            Guid guid = Guid.NewGuid(); // Generate a new GUID for each set of responses
-            DateTime dateTime = DateTime.UtcNow; // Use the current date and time
+            // Generate a GUID for the batch of responses and use the current date/time
+            Guid guid = Guid.NewGuid();
+            DateTime dateTime = DateTime.UtcNow;
 
             foreach (var response in responses)
             {
-                foreach (var item in response)
+                if (!response.ContainsKey("Name") || !response.ContainsKey("Value"))
                 {
-                    string insertQuery = @"
-                INSERT INTO Log (Date, Name, Value, GUID)
-                VALUES (@date, @name, @value, @guid);";
-
-                    using (var command = new SqliteCommand(insertQuery, _connection))
-                    {
-                        command.Parameters.AddWithValue("@date", dateTime.ToString("o"));
-                        command.Parameters.AddWithValue("@name", item.Key);
-                        command.Parameters.AddWithValue("@value", item.Value?.ToString());
-                        command.Parameters.AddWithValue("@guid", guid.ToString());
-
-                        command.ExecuteNonQuery(); // Execute the insertion
-                    }
+                    throw new ArgumentException("Each response must contain both 'Name' and 'Value' keys.");
                 }
+                // Create one log entry for each response dictionary
+                var logEntry = new Response
+                {
+                    DateTime = dateTime,
+                    Name = response.ContainsKey("Name") ? response["Name"].ToString() : null,
+                    Value = response.ContainsKey("Value") ? response["Value"].ToString() : null,
+                    GUID = guid.ToString()
+                };
+
+                _context.LogEntries.Add(logEntry); // Add the log entry
             }
+
+            // Save changes to the database
+            _context.SaveChanges();
         }
 
-
-        // Dispose of the connection to close the database
         public void Dispose()
         {
-            if (_connection != null)
-            {
-                _connection.Close();
-                _connection.Dispose();
-            }
+            _context?.Dispose();
         }
     }
-
-
 }

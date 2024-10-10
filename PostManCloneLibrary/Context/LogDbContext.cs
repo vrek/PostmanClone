@@ -17,6 +17,9 @@ namespace PostManCloneLibrary.Context
             modelBuilder.Entity<Response>()
                 .Property(e => e.GUID)
                 .IsRequired();
+            modelBuilder.Entity<Response>()
+                .Property(e => e.DateTime)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
         }
     }
 

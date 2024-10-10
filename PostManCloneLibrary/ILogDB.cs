@@ -2,6 +2,8 @@
 {
     public interface ILogDB
     {
-        void InitializeDB();
+        //string GetConnectionString();
+        public void InsertResults(List<Dictionary<string, object>> responses);
+        public void Dispose();
     }
 }
