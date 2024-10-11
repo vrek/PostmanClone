@@ -59,36 +59,47 @@ namespace PostManCloneLibraryTests
 
             // Assert
             List<PostManCloneLibrary.Models.Response> insertedLogs = [.. _context.LogEntries];
-            Assert.AreEqual(2, insertedLogs.Count);
+            Assert.AreEqual(4, insertedLogs.Count);
         }
 
         [TestMethod]
         public void InsertResults_ShouldInsertDataCorrectlyIntoDatabase()
         {
             // Arrange
-            List<Dictionary<string, object>> responses =
-                [
-                    new() {
-                        { "Name", "TestName1" },
-                        { "Value", "TestValue1" }
-                    },
-                    new() {
-                        { "Name", "TestName2" },
-                        { "Value", "TestValue2" }
-                    }
-                ];
+            List<Dictionary<string, object>> responses = new()
+    {
+        new() {
+            { "Name", "TestName1" },
+            { "Value", "TestValue1" }
+        },
+        new() {
+            { "Name", "TestName2" },
+            { "Value", "TestValue2" }
+        }
+    };
 
             // Act
             _logDb.InsertResults(responses);
 
             // Assert
-            List<PostManCloneLibrary.Models.Response> insertedLogs = [.. _context.LogEntries];
+            List<PostManCloneLibrary.Models.Response> insertedLogs = _context.LogEntries.ToList();
 
-            Assert.AreEqual("TestName1", insertedLogs[0].Name);
-            Assert.AreEqual("TestValue1", insertedLogs[0].Value);
+            // There should be 4 entries (2 Name-Value pairs from each dictionary)
+            Assert.AreEqual(4, insertedLogs.Count);
 
-            Assert.AreEqual("TestName2", insertedLogs[1].Name);
-            Assert.AreEqual("TestValue2", insertedLogs[1].Value);
+            // Check first dictionary entries
+            Assert.AreEqual("Name", insertedLogs[0].Name);
+            Assert.AreEqual("TestName1", insertedLogs[0].Value);
+
+            Assert.AreEqual("Value", insertedLogs[1].Name);
+            Assert.AreEqual("TestValue1", insertedLogs[1].Value);
+
+            // Check second dictionary entries
+            Assert.AreEqual("Name", insertedLogs[2].Name);
+            Assert.AreEqual("TestName2", insertedLogs[2].Value);
+
+            Assert.AreEqual("Value", insertedLogs[3].Name);
+            Assert.AreEqual("TestValue2", insertedLogs[3].Value);
         }
 
         [TestMethod]
@@ -101,41 +112,6 @@ namespace PostManCloneLibraryTests
             List<PostManCloneLibrary.Models.Response> InsertedLogs = [.. _context.LogEntries];
             Assert.AreEqual(0, InsertedLogs.Count);
 
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void InsertResults_ShouldThrowExceptionForDataMissingValue()
-        {
-            // Arrange
-            List<Dictionary<string, object>> responses =
-            [
-                new() {
-                    { "Name", "TestName1" }  // Missing Value key
-                },
-            ];
-            // Act
-            _logDb.InsertResults(responses);
-
-            // Assert
-            // No assert needed, as we're expecting an exception to be thrown
-        }
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void InsertResults_ShouldThrowExceptionForDataMissingName()
-        {
-            // Arrange
-            List<Dictionary<string, object>> responses =
-            [
-                new() {
-                    { "Value", "ValueName1" }  // Missing Value key
-                },
-            ];
-            // Act
-            _logDb.InsertResults(responses);
-
-            // Assert
-            // No assert needed, as we're expecting an exception to be thrown
         }
 
         [TestMethod]
@@ -159,13 +135,13 @@ namespace PostManCloneLibraryTests
 
             // Assert
             List<PostManCloneLibrary.Models.Response> insertedLogs = [.. _context.LogEntries];
-            Assert.AreEqual(2, insertedLogs.Count);
+            Assert.AreEqual(4, insertedLogs.Count);
 
             // First log entry should have the integer value converted to string
-            Assert.AreEqual("12345", insertedLogs[0].Value);
+            Assert.AreEqual("12345", insertedLogs[1].Value);
 
             // Second log entry should have the boolean value converted to string
-            Assert.AreEqual("True", insertedLogs[1].Value);
+            Assert.AreEqual("True", insertedLogs[3].Value);
         }
     }
 }

@@ -29,20 +29,19 @@ namespace PostManCloneLibrary
 
             foreach (Dictionary<string, object> response in responses)
             {
-                if (!response.ContainsKey("Name") || !response.ContainsKey("Value"))
+                foreach (KeyValuePair<string, object> entry in response)
                 {
-                    throw new ArgumentException("Each response must contain both 'Name' and 'Value' keys.");
-                }
-                // Create one log entry for each response dictionary
-                Response logEntry = new()
-                {
-                    DateTime = dateTime,
-                    Name = response.ContainsKey("Name") ? response["Name"].ToString() : null,
-                    Value = response.ContainsKey("Value") ? response["Value"].ToString() : null,
-                    GUID = guid.ToString()
-                };
+                    // Create a new log entry for each key-value pair
+                    Response logEntry = new()
+                    {
+                        DateTime = dateTime,
+                        Name = entry.Key,  // Use the dictionary key as "Name"
+                        Value = entry.Value?.ToString(),  // Convert the value to string (handles null values)
+                        GUID = guid.ToString()
+                    };
 
-                _ = _context.LogEntries.Add(logEntry); // Add the log entry
+                    _ = _context.LogEntries.Add(logEntry); // Add the log entry
+                }
             }
 
             // Save changes to the database
